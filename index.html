@@ -17,6 +17,7 @@
   --shadow-gold:0 8px 32px rgba(201,168,76,.18);--shadow-navy:0 8px 32px rgba(13,30,63,.14);
 }
 html{scroll-behavior:smooth}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 body{font-family:'Inter',sans-serif;font-size:16px;color:var(--text);background:var(--white);line-height:1.7}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--navy2)}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px}
 
@@ -34,6 +35,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,24,48,.97
 .nav-caf:hover{background:rgba(201,168,76,.12);border-color:var(--gold)!important;color:var(--gold)!important}
 .nav-cta{background:var(--gold)!important;color:var(--navy2)!important;padding:9px 20px;border-radius:6px;font-weight:700!important;font-size:13px!important;transition:background .2s!important}
 .nav-cta:hover{background:var(--gold2)!important}
+.nav-toggle{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:38px;height:38px;background:transparent;border:1px solid rgba(201,168,76,.3);border-radius:8px;cursor:pointer;flex-shrink:0}
+.nav-toggle span{width:20px;height:2px;background:var(--gold3);border-radius:2px;transition:transform .25s ease,opacity .2s ease}
+.nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-toggle.open span:nth-child(2){opacity:0}
+.nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.nav-overlay{display:none;position:fixed;inset:0;top:72px;background:rgba(6,13,31,.6);z-index:190}
+.nav-overlay.open{display:block}
 
 /* ── HERO ── */
 .hero{min-height:100vh;background:var(--navy2);display:flex;align-items:center;padding:110px 5vw 70px;position:relative;overflow:hidden}
@@ -48,14 +56,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,24,48,.97
 .hero h1 em{font-style:normal;color:var(--gold)}
 .hero-desc{color:rgba(255,255,255,.58);font-size:16px;line-height:1.82;margin-bottom:2.3rem;max-width:500px}
 .hero-btns{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2.8rem}
-.btn-gold{background:var(--gold);color:var(--navy2);padding:14px 28px;border-radius:8px;font-weight:700;font-size:14.5px;text-decoration:none;transition:background .2s,transform .15s;display:inline-block}
-.btn-gold:hover{background:var(--gold2);transform:translateY(-1px)}
+.btn-gold{background:var(--gold);color:var(--navy2);padding:14px 28px;border-radius:8px;font-weight:700;font-size:14.5px;text-decoration:none;transition:background .2s,transform .15s,box-shadow .15s;display:inline-block;box-shadow:0 4px 0 var(--gold4),0 8px 16px rgba(201,168,76,.25)}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 6px 0 var(--gold4),0 12px 20px rgba(201,168,76,.3)}
+.btn-gold:active{transform:translateY(2px);box-shadow:0 1px 0 var(--gold4),0 2px 6px rgba(201,168,76,.25)}
 .btn-ghost{border:1.5px solid rgba(201,168,76,.45);color:rgba(255,255,255,.82);padding:13px 28px;border-radius:8px;font-weight:500;font-size:14.5px;text-decoration:none;transition:border-color .2s,background .2s;display:inline-block}
 .btn-ghost:hover{border-color:var(--gold);background:rgba(201,168,76,.08);color:#fff}
 .hero-stats{display:flex;gap:2.5rem;flex-wrap:wrap}
 .stat-item .num{font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:700;color:var(--gold);line-height:1}
 .stat-item .lbl{font-size:10.5px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.12em;margin-top:3px}
-.hero-card{background:rgba(22,41,82,.7);border:1px solid rgba(201,168,76,.22);border-radius:20px;padding:2.1rem;position:relative;overflow:hidden;backdrop-filter:blur(6px)}
+.hero-inner{perspective:1200px}
+.hero-card{background:rgba(22,41,82,.7);border:1px solid rgba(201,168,76,.22);border-radius:20px;padding:2.1rem;position:relative;overflow:hidden;backdrop-filter:blur(6px);transform-style:preserve-3d;transition:transform .15s ease-out;box-shadow:0 24px 50px rgba(0,0,0,.35),0 0 40px rgba(201,168,76,.06);will-change:transform}
+.hero-card *{transform:translateZ(20px)}
 .hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold4),var(--gold),var(--gold3))}
 .hc-logo{width:112px;height:112px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 1.4rem;border:3px solid var(--gold);background:#fff;box-shadow:0 0 20px rgba(201,168,76,.25)}
 .hc-name{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--white);text-align:center;margin-bottom:.25rem;font-weight:700}
@@ -79,10 +90,10 @@ section{padding:84px 5vw}
 
 /* ── SERVICES ── */
 #services{background:var(--off-white)}
-.svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem}
-.svc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem 1.8rem 1.8rem 2.1rem;position:relative;overflow:hidden;transition:box-shadow .25s,transform .25s}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;perspective:1000px}
+.svc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem 1.8rem 1.8rem 2.1rem;position:relative;overflow:hidden;transition:box-shadow .3s,transform .3s;transform-style:preserve-3d}
 .svc-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--gold),var(--gold4));border-radius:4px 0 0 4px}
-.svc-card:hover{box-shadow:var(--shadow-gold);transform:translateY(-3px)}
+.svc-card:hover{box-shadow:var(--shadow-gold);transform:translateY(-5px) rotateX(4deg) rotateY(-2deg)}
 .svc-icon{width:46px;height:46px;background:var(--gold-pale);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1.1rem;font-size:22px}
 .svc-card h3{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:.5rem}
 .svc-card p{font-size:13.5px;color:var(--text-mid);line-height:1.72}
@@ -107,7 +118,7 @@ section{padding:84px 5vw}
 .pane.active{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.85rem}
 .c-pill{background:var(--off-white);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--navy);font-weight:600;transition:all .2s;cursor:pointer}
 .c-pill::before{content:'🎓';font-size:13px;flex-shrink:0}
-.c-pill:hover{border-color:var(--gold);background:var(--gold-pale);color:var(--gold4);box-shadow:0 4px 12px rgba(201,168,76,.15);transform:translateY(-1px)}
+.c-pill:hover{border-color:var(--gold);background:var(--gold-pale);color:var(--gold4);box-shadow:0 8px 18px rgba(201,168,76,.2);transform:translateY(-2px) scale(1.015)}
 .pill-arrow{margin-left:auto;font-size:10px;color:var(--gold);opacity:0;transition:opacity .2s}
 .c-pill:hover .pill-arrow{opacity:1}
 
@@ -123,6 +134,15 @@ section{padding:84px 5vw}
 .modal-close:hover{color:var(--gold)}
 .modal-body{display:grid;grid-template-columns:1fr 1fr}
 .modal-video{background:#000;position:relative;padding-bottom:56.25%;height:0;overflow:hidden}
+.vid-facade{position:absolute;inset:0;width:100%;height:100%;border:0;cursor:pointer;background:#000 center/cover no-repeat;display:flex;align-items:center;justify-content:center;z-index:2;padding:0}
+.vid-facade::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.45))}
+.vid-play{position:relative;z-index:1;width:68px;height:68px;border-radius:50%;background:var(--gold);color:var(--navy);font-size:26px;display:flex;align-items:center;justify-content:center;padding-left:5px;box-shadow:0 0 0 8px rgba(201,168,76,.25),0 10px 30px rgba(0,0,0,.5);transition:transform .25s}
+.vid-facade:hover .vid-play{transform:scale(1.1)}
+.vid-fallback{display:none;position:absolute;inset:0;z-index:3;background:rgba(10,24,48,.96);color:#fff;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:1rem;font-size:13px}
+.vid-fallback a{background:var(--gold);color:var(--navy);padding:9px 18px;border-radius:8px;font-weight:700;text-decoration:none}
+.modal-video.failed .vid-fallback{display:flex}
+.modal-video.playing .vid-facade{display:none}
+.modal-video:not(.playing) iframe{visibility:hidden}
 .modal-video iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
 .modal-details{padding:1.4rem 1.5rem;display:flex;flex-direction:column;gap:1rem}
 .detail-row{display:flex;align-items:flex-start;gap:10px;padding-bottom:.9rem;border-bottom:1px solid var(--border)}
@@ -221,18 +241,18 @@ section{padding:84px 5vw}
 
 /* ── EXAMS ── */
 #exams{background:var(--off-white)}
-.exams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1rem}
-.exam-card{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:1.5rem 1rem;text-align:center;transition:border-color .2s,transform .2s,box-shadow .2s}
-.exam-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:var(--shadow-gold)}
+.exams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1rem;perspective:900px}
+.exam-card{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:1.5rem 1rem;text-align:center;transition:border-color .2s,transform .3s,box-shadow .3s;transform-style:preserve-3d}
+.exam-card:hover{border-color:var(--gold);transform:translateY(-4px) rotateX(6deg);box-shadow:var(--shadow-gold)}
 .exam-badge{display:inline-block;background:var(--navy);color:var(--gold);font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;padding:8px 16px;border-radius:6px;margin-bottom:.75rem;letter-spacing:.05em}
 .exam-card p{font-size:12px;color:var(--text-muted);line-height:1.55}
 
 /* ── WHY US ── */
 #why{background:var(--gold-pale)}
-.why-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem}
-.why-card{background:var(--white);border-radius:var(--radius);padding:1.6rem;border:1px solid var(--border);position:relative;overflow:hidden;transition:box-shadow .25s,transform .25s}
+.why-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;perspective:1000px}
+.why-card{background:var(--white);border-radius:var(--radius);padding:1.6rem;border:1px solid var(--border);position:relative;overflow:hidden;transition:box-shadow .3s,transform .3s;transform-style:preserve-3d}
 .why-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold4),var(--gold));transform:scaleX(0);transition:transform .3s;transform-origin:left}
-.why-card:hover{box-shadow:var(--shadow-navy);transform:translateY(-2px)}
+.why-card:hover{box-shadow:var(--shadow-navy);transform:translateY(-4px) rotateX(4deg)}
 .why-card:hover::after{transform:scaleX(1)}
 .why-icon{font-size:28px;margin-bottom:.9rem;display:block}
 .why-card h4{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:.4rem}
@@ -336,8 +356,9 @@ section{padding:84px 5vw}
 .caf-btn-back:hover{border-color:var(--navy);color:var(--navy)}
 .caf-btn-next{background:var(--navy);color:var(--gold);border:none;padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;letter-spacing:.02em}
 .caf-btn-next:hover{background:var(--navy4)}
-.caf-btn-submit{background:var(--gold);color:var(--navy2);border:none;padding:12px 36px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s}
-.caf-btn-submit:hover{background:var(--gold2)}
+.caf-btn-submit{background:var(--gold);color:var(--navy2);border:none;padding:12px 36px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s,transform .15s,box-shadow .15s;box-shadow:0 4px 0 var(--gold4)}
+.caf-btn-submit:hover{background:var(--gold2);transform:translateY(-1px)}
+.caf-btn-submit:active{transform:translateY(3px);box-shadow:0 1px 0 var(--gold4)}
 
 .step-counter{font-size:12px;color:var(--text-muted);font-weight:600}
 
@@ -392,18 +413,131 @@ footer{background:#060D1F;padding:60px 5vw 28px;color:rgba(255,255,255,.38)}
 .wa-fab{position:fixed;bottom:28px;right:28px;z-index:300;width:58px;height:58px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 4px 22px rgba(37,211,102,.4);transition:transform .2s;font-size:26px}
 .wa-fab:hover{transform:scale(1.08)}
 
+/* ══════════════════════════════════════
+   RESPONSIVE / MOBILE
+══════════════════════════════════════ */
+@media(max-width:900px){
+  .nav-links{position:fixed;top:72px;right:0;bottom:0;width:min(78vw,320px);flex-direction:column;align-items:stretch;gap:0;background:var(--navy2);border-left:1px solid rgba(201,168,76,.18);padding:1.2rem 1.4rem;overflow-y:auto;transform:translateX(100%);transition:transform .3s ease;z-index:199}
+  .nav-links.open{transform:translateX(0)}
+  .nav-links li{width:100%}
+  .nav-links a{display:block;padding:14px 4px;border-bottom:1px solid rgba(255,255,255,.06);font-size:15px}
+  .nav-caf,.nav-cta{margin-top:.75rem;text-align:center;border-radius:8px}
+  .nav-toggle{display:flex}
+}
+
 @media(max-width:768px){
-  .hero-inner{grid-template-columns:1fr}.hero-card,.hero-bigtext{display:none}
+  .hero-inner{grid-template-columns:1fr;gap:2.5rem}
+  .hero-bigtext{display:none}
+  .hero-card{max-width:420px;margin:0 auto}
+  section{padding:56px 5vw}
   .online-grid,.contact-grid{grid-template-columns:1fr}
-  .footer-top,.cform-row{grid-template-columns:1fr 1fr}
-  .process-wrap{grid-template-columns:1fr 1fr;gap:1.5rem}.process-line{display:none}
-  nav ul{display:none}
+  .footer-top{grid-template-columns:1fr 1fr;gap:2rem}
+  .cform-row{grid-template-columns:1fr 1fr}
+  .process-wrap{grid-template-columns:1fr 1fr;gap:1.5rem}
+  .process-line{display:none}
   .fg-grid.col2,.fg-grid.col3{grid-template-columns:1fr}
   .drow.edu5,.drow.work4,.drow.exam3{grid-template-columns:1fr}
   .table-header{display:none}
   .modal-body{grid-template-columns:1fr}
   .city-tooltip{left:0;transform:none;width:240px}
   .city-tooltip::after{left:30px;transform:none}
+  .caf-header{padding:1.1rem 1.4rem;flex-wrap:wrap;gap:.75rem}
+  .caf-body{padding:1.6rem 1.4rem 1rem}
+  .caf-nav{padding:1rem 1.4rem 1.4rem;flex-wrap:wrap;gap:.75rem}
+  .svc-card:hover,.why-card:hover,.exam-card:hover{transform:translateY(-3px)}
+}
+
+@media(max-width:600px){
+  .nl-text .brand{font-size:14px}
+  .nl-text .sub{font-size:8px}
+  nav{padding:0 4vw;height:64px}
+  .nav-links{top:64px}
+  .hero{padding:100px 5vw 50px}
+  .hero h1{font-size:clamp(1.8rem,7vw,2.3rem)}
+  .hero-btns{flex-direction:column}
+  .hero-btns a{text-align:center;width:100%}
+  .hero-stats{gap:1.5rem}
+  .tabs{gap:.4rem}
+  .tab{padding:7px 14px;font-size:12px}
+  .footer-top{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;text-align:center;gap:.5rem}
+  .wa-fab{bottom:18px;right:18px;width:50px;height:50px;font-size:22px}
+}
+
+@media(max-width:480px){
+  .sh{font-size:1.5rem}
+  .eyebrow{font-size:9.5px}
+  .cform-row{grid-template-columns:1fr}
+  .caf-app-badge{display:none}
+  .caf-header-left img{width:40px;height:40px}
+  .caf-header-title{font-size:.95rem}
+  .step-counter{display:none}
+  .caf-nav{justify-content:center}
+  .caf-btn-next,.caf-btn-submit{width:100%}
+  .exams-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+}
+
+
+/* ══ REVAMP LAYER ══ */
+#scrollProg{position:fixed;top:0;left:0;height:3px;width:0;z-index:300;background:linear-gradient(90deg,var(--gold4),var(--gold3),var(--gold));box-shadow:0 0 12px rgba(232,201,122,.7);pointer-events:none}
+nav{transition:height .35s ease,background .35s ease,box-shadow .35s ease}
+nav.scrolled{height:60px;background:rgba(8,18,38,.92);box-shadow:0 10px 40px rgba(0,0,0,.35),0 1px 0 rgba(201,168,76,.25)}
+/* hero atmosphere */
+.hero{background:radial-gradient(1200px 700px at 85% 10%,rgba(30,53,102,.9),transparent 60%),radial-gradient(900px 600px at 5% 95%,rgba(201,168,76,.10),transparent 60%),linear-gradient(160deg,#0A1830 0%,#0D1E3F 55%,#0A1830 100%)}
+.hero-glow1{animation:orbA 14s ease-in-out infinite alternate}
+.hero-glow2{animation:orbB 17s ease-in-out infinite alternate}
+@keyframes orbA{from{transform:translate(0,0) scale(1)}to{transform:translate(-60px,50px) scale(1.18)}}
+@keyframes orbB{from{transform:translate(0,0) scale(1)}to{transform:translate(70px,-40px) scale(1.25)}}
+.hero-bigtext{animation:bigDrift 18s ease-in-out infinite alternate}
+@keyframes bigDrift{from{transform:translateY(-50%) translateX(0)}to{transform:translateY(-52%) translateX(-18px)}}
+.hero-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.hero-particles i{position:absolute;bottom:-10px;width:var(--s);height:var(--s);border-radius:50%;background:radial-gradient(circle,var(--gold3),rgba(201,168,76,0) 70%);opacity:0;animation:floatUp var(--d) linear var(--dl) infinite}
+@keyframes floatUp{0%{transform:translate(0,0);opacity:0}10%{opacity:.8}90%{opacity:.4}100%{transform:translate(var(--x),-105vh);opacity:0}}
+.hero h1 em{background:linear-gradient(100deg,var(--gold4) 0%,var(--gold3) 35%,#fff6d6 50%,var(--gold3) 65%,var(--gold4) 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:goldShine 5s linear infinite}
+@keyframes goldShine{from{background-position:120% 0}to{background-position:-120% 0}}
+.hero-eyebrow,.hero h1,.hero-desc,.hero-btns,.hero-stats{animation:heroIn .9s cubic-bezier(.2,.7,.2,1) backwards}
+.hero h1{animation-delay:.12s}.hero-desc{animation-delay:.25s}.hero-btns{animation-delay:.38s}.hero-stats{animation-delay:.5s}
+@keyframes heroIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.hero-card{box-shadow:0 30px 80px rgba(0,0,0,.45),0 0 0 1px rgba(232,201,122,.12) inset,0 0 60px rgba(201,168,76,.10);animation:heroIn 1s .3s cubic-bezier(.2,.7,.2,1) backwards}
+.hero-stats .stat-item{padding-left:14px;border-left:2px solid rgba(201,168,76,.35)}
+/* buttons shimmer */
+.btn-gold,.caf-btn-submit,.cf-submit{position:relative;overflow:hidden}
+.btn-gold::after,.caf-btn-submit::after,.cf-submit::after{content:'';position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);transition:left .7s ease;pointer-events:none}
+.btn-gold:hover::after,.caf-btn-submit:hover::after,.cf-submit:hover::after{left:130%}
+.btn-gold{box-shadow:0 8px 28px rgba(201,168,76,.35)}
+/* spotlight cards */
+.svc-card,.why-card,.exam-card,.testi-card,.c-pill{--mx:50%;--my:50%}
+.svc-card:hover,.why-card:hover,.exam-card:hover{background-image:radial-gradient(380px circle at var(--mx) var(--my),rgba(201,168,76,.16),transparent 60%)}
+.testi-card:hover{background-image:radial-gradient(380px circle at var(--mx) var(--my),rgba(232,201,122,.14),transparent 60%);border-color:rgba(232,201,122,.45)}
+.svc-card,.why-card,.exam-card,.testi-card{transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s,border-color .35s}
+.svc-card:hover{box-shadow:0 22px 50px rgba(13,30,63,.16),0 0 0 1px rgba(201,168,76,.45)}
+.why-icon,.exam-badge{transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+.why-card:hover .why-icon{transform:scale(1.25) rotate(-8deg)}
+.exam-card:hover .exam-badge{transform:scale(1.12)}
+/* section heading accent */
+.eyebrow{position:relative}
+.sh{letter-spacing:-.01em}
+section{position:relative}
+/* scroll reveal */
+.rv{opacity:0;transform:translateY(34px) scale(.98);transition:opacity .8s cubic-bezier(.2,.7,.2,1) var(--rd,0s),transform .8s cubic-bezier(.2,.7,.2,1) var(--rd,0s)}
+.rv.in{opacity:1;transform:none}
+/* process line glow */
+.process-fill{box-shadow:0 0 14px rgba(232,201,122,.8)}
+/* WhatsApp pulse */
+.wa-fab{animation:waPulse 2.6s ease-out infinite}
+@keyframes waPulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.55)}70%{box-shadow:0 0 0 18px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+@media(max-width:768px){.hero-particles i:nth-child(n+11){display:none}nav.scrolled{height:56px}}
+@media(prefers-reduced-motion:reduce){
+  .rv{opacity:1!important;transform:none!important}
+  .hero-particles{display:none}
+  .hero h1 em{animation:none;background:none;-webkit-text-fill-color:currentColor;color:var(--gold)}
+  .hero-glow1,.hero-glow2,.hero-bigtext,.wa-fab,.hero-eyebrow,.hero h1,.hero-desc,.hero-btns,.hero-stats,.hero-card{animation:none!important}
+}
+
+/* Respect users who prefer reduced motion: disable 3D/transform flourishes */
+@media(prefers-reduced-motion:reduce){
+  *{transition-duration:.001ms!important;animation-duration:.001ms!important}
+  .hero-card,.hero-card *,.svc-card,.why-card,.exam-card,.c-pill,.btn-gold,.caf-btn-submit{transform:none!important}
 }
 </style>
 </head>
@@ -419,7 +553,11 @@ footer{background:#060D1F;padding:60px 5vw 28px;color:rgba(255,255,255,.38)}
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="modal-video"><iframe id="m-video" src="" title="College Video" allowfullscreen loading="lazy"></iframe></div>
+      <div class="modal-video" id="m-videobox">
+        <iframe id="m-video" src="" title="College Video" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <button type="button" class="vid-facade" id="m-facade" aria-label="Play video"><span class="vid-play">&#9654;</span></button>
+        <div class="vid-fallback" id="m-vfallback"><p>This video can't play inside the page here.</p><a id="m-vlink" href="#" target="_blank" rel="noopener">&#9654; Watch on YouTube</a></div>
+      </div>
       <div class="modal-details">
         <div class="detail-row"><span class="detail-icon">🎓</span><div><div class="detail-label">Program</div><div class="detail-value" id="m-prog"></div></div></div>
         <div class="detail-row"><span class="detail-icon">💰</span><div><div class="detail-label">Fees</div><div class="detail-value" id="m-fees"></div></div></div>
@@ -452,7 +590,11 @@ footer{background:#060D1F;padding:60px 5vw 28px;color:rgba(255,255,255,.38)}
     <li><a href="#why">Why Us</a></li>
     <li><a href="#contact" class="nav-cta">Book Free Call</a></li>
   </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" onclick="toggleMobileNav()">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div class="nav-overlay" id="navOverlay" onclick="closeMobileNav()"></div>
 
 <!-- HERO -->
 <section class="hero" id="home">
@@ -531,6 +673,7 @@ footer{background:#060D1F;padding:60px 5vw 28px;color:rgba(255,255,255,.38)}
       <button class="tab active" data-tab="cat">Under CAT</button>
       <button class="tab" data-tab="xat">Under XAT</button>
       <button class="tab" data-tab="cmat">Under CMAT</button>
+      <button class="tab" data-tab="mat">Under MAT</button>
       <button class="tab" data-tab="nirf">NIRF Ranked</button>
       <button class="tab" data-tab="online2">Online MBA</button>
     </div>
@@ -547,7 +690,6 @@ footer{background:#060D1F;padding:60px 5vw 28px;color:rgba(255,255,255,.38)}
       <div class="c-pill" onclick="openModal('cat_10')">Alliance University<span class="pill-arrow">→</span></div>
       <div class="c-pill" onclick="openModal('cat_11')">Christ University<span class="pill-arrow">→</span></div>
       <div class="c-pill" onclick="openModal('cat_12')">Woxsen University<span class="pill-arrow">→</span></div>
-      <div class="c-pill" onclick="openModal('cat_13')">DY Patil University<span class="pill-arrow">→</span></div>
       <div class="c-pill" onclick="openModal('cat_14')">IFIM Business School<span class="pill-arrow">→</span></div>
       <div class="c-pill" onclick="openModal('cat_15')">Kirloskar Institute<span class="pill-arrow">→</span></div>
 </div>
@@ -577,6 +719,42 @@ footer{background:#060D1F;padding:60px 5vw 28px;color:rgba(255,255,255,.38)}
       <div class="c-pill" onclick="openModal('cmat_10')">Woxsen University<span class="pill-arrow">→</span></div>
       <div class="c-pill" onclick="openModal('cmat_11')">K J Somaiya<span class="pill-arrow">→</span></div>
 </div>
+    <div class="pane" id="tab-mat">
+      <div class="c-pill" onclick="openModal('cat_16')">IZEE Business School, Bengaluru<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_17')">GIBS, Bengaluru<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_18')">ISBR Business School, Bangalore<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_19')">International School of Management Excellence (ISME), Bangalore<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_20')">International Institute of Business Studies, Bangalore<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_21')">Indus Business Academy (IBA), Bangalore<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_22')">Regional College of Management, Bangalore<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_23')">Ramaiah Institute of Management Studies (RIMS), Bangalore<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_24')">Acharya Bangalore B-School, Bangalore<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_25')">Birla Global University, Bhubaneswar<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_26')">Sri Sri University, Bhubaneswar<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_27')">Jagadguru Kripalu University, Bhubaneswar<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_28')">Doon Business School (DBS Global University), Dehradun<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_29')">UPES School of Business, Dehradun<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_30')">Jaipuria Institute of Management, Jaipur<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_31')">BML Munjal University<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_32')">IILM University, Gurugram<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_33')">GNIOT Institute of Management Studies (GIMS), Greater Noida<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_34')">Noida International University (NIU), Noida<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_35')">Lloyd Business School, Greater Noida<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_36')">Calcutta Business School (CBS), Kolkata<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_37')">United World School of Business (IQ City UWSB), Kolkata<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_38')">Praxis Business School, Kolkata<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_39')">Bengal Institute of Business Studies (BIBS), Kolkata<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_40')">MDI Murshidabad<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_41')">Siva Sivani Institute of Management (SSIM), Hyderabad<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_42')">Vignana Jyothi Institute of Management (VJIM), Hyderabad<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_43')">Ashoka School of Business, Hyderabad<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_44')">RIIM Pune (Ramachandran International Institute of Management)<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_45')">Indus Business School Pune (IIEBM)<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_46')">Pune Institute of Business Management (PIBM Pune)<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_47')">Imperial School of Banking and Management Studies (ISBMS), Pune<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_48')">Lexicon Management Institute of Leadership and Excellence (Lexicon MILE), Pune<span class="pill-arrow">→</span></div>
+      <div class="c-pill" onclick="openModal('cat_49')">ISMS Pune<span class="pill-arrow">→</span></div>
+    </div>
     <div class="pane" id="tab-nirf">      <div class="c-pill" onclick="openModal('nirf_0')">IIM Ahmedabad (#1)<span class="pill-arrow">→</span></div>
       <div class="c-pill" onclick="openModal('nirf_1')">IIM Bangalore (#2)<span class="pill-arrow">→</span></div>
       <div class="c-pill" onclick="openModal('nirf_2')">IIM Calcutta (#3)<span class="pill-arrow">→</span></div>
@@ -598,7 +776,6 @@ footer{background:#060D1F;padding:60px 5vw 28px;color:rgba(255,255,255,.38)}
       <div class="c-pill" onclick="openModal('online2_5')">Jain University Online<span class="pill-arrow">→</span></div>
       <div class="c-pill" onclick="openModal('online2_6')">Alliance Online<span class="pill-arrow">→</span></div>
       <div class="c-pill" onclick="openModal('online2_7')">DY Patil Online<span class="pill-arrow">→</span></div>
-      <div class="c-pill" onclick="openModal('online2_8')">Woxsen Online<span class="pill-arrow">→</span></div>
       <div class="c-pill" onclick="openModal('online2_9')">Symbiosis Online<span class="pill-arrow">→</span></div>
 </div>
     <p style="margin-top:1.5rem;font-size:13px;color:var(--text-muted)">💡 Click any college name to view full details and start your application.</p>
@@ -839,8 +1016,8 @@ footer{background:#060D1F;padding:60px 5vw 28px;color:rgba(255,255,255,.38)}
             <option value="Chandigarh University">Chandigarh University</option>
             <option value="Christ University">Christ University</option>
             <option value="DY Patil Online">DY Patil Online</option>
-            <option value="DY Patil University">DY Patil University</option>
             <option value="FORE School Delhi">FORE School Delhi</option>
+            <option value="GIBS, Bengaluru">GIBS, Bengaluru</option>
             <option value="GIM Goa">GIM Goa</option>
             <option value="IFIM Business School">IFIM Business School</option>
             <option value="IIM Ahmedabad">IIM Ahmedabad</option>
@@ -861,6 +1038,39 @@ footer{background:#060D1F;padding:60px 5vw 28px;color:rgba(255,255,255,.38)}
             <option value="JBIMS Mumbai">JBIMS Mumbai</option>
             <option value="Jain University Online">Jain University Online</option>
             <option value="K J Somaiya">K J Somaiya</option>
+            <option value="IZEE Business School, Bengaluru">IZEE Business School, Bengaluru</option>
+            <option value="ISBR Business School, Bangalore">ISBR Business School, Bangalore</option>
+            <option value="International School of Management Excellence (ISME), Bangalore">International School of Management Excellence (ISME), Bangalore</option>
+            <option value="International Institute of Business Studies, Bangalore">International Institute of Business Studies, Bangalore</option>
+            <option value="Indus Business Academy (IBA), Bangalore">Indus Business Academy (IBA), Bangalore</option>
+            <option value="Regional College of Management, Bangalore">Regional College of Management, Bangalore</option>
+            <option value="Ramaiah Institute of Management Studies (RIMS), Bangalore">Ramaiah Institute of Management Studies (RIMS), Bangalore</option>
+            <option value="Acharya Bangalore B-School, Bangalore">Acharya Bangalore B-School, Bangalore</option>
+            <option value="Birla Global University, Bhubaneswar">Birla Global University, Bhubaneswar</option>
+            <option value="Sri Sri University, Bhubaneswar">Sri Sri University, Bhubaneswar</option>
+            <option value="Jagadguru Kripalu University, Bhubaneswar">Jagadguru Kripalu University, Bhubaneswar</option>
+            <option value="Doon Business School (DBS Global University), Dehradun">Doon Business School (DBS Global University), Dehradun</option>
+            <option value="UPES School of Business, Dehradun">UPES School of Business, Dehradun</option>
+            <option value="Jaipuria Institute of Management, Jaipur">Jaipuria Institute of Management, Jaipur</option>
+            <option value="BML Munjal University">BML Munjal University</option>
+            <option value="IILM University, Gurugram">IILM University, Gurugram</option>
+            <option value="GNIOT Institute of Management Studies (GIMS), Greater Noida">GNIOT Institute of Management Studies (GIMS), Greater Noida</option>
+            <option value="Noida International University (NIU), Noida">Noida International University (NIU), Noida</option>
+            <option value="Lloyd Business School, Greater Noida">Lloyd Business School, Greater Noida</option>
+            <option value="Calcutta Business School (CBS), Kolkata">Calcutta Business School (CBS), Kolkata</option>
+            <option value="United World School of Business (IQ City UWSB), Kolkata">United World School of Business (IQ City UWSB), Kolkata</option>
+            <option value="Praxis Business School, Kolkata">Praxis Business School, Kolkata</option>
+            <option value="Bengal Institute of Business Studies (BIBS), Kolkata">Bengal Institute of Business Studies (BIBS), Kolkata</option>
+            <option value="MDI Murshidabad">MDI Murshidabad</option>
+            <option value="Siva Sivani Institute of Management (SSIM), Hyderabad">Siva Sivani Institute of Management (SSIM), Hyderabad</option>
+            <option value="Vignana Jyothi Institute of Management (VJIM), Hyderabad">Vignana Jyothi Institute of Management (VJIM), Hyderabad</option>
+            <option value="Ashoka School of Business, Hyderabad">Ashoka School of Business, Hyderabad</option>
+            <option value="RIIM Pune (Ramachandran International Institute of Management)">RIIM Pune (Ramachandran International Institute of Management)</option>
+            <option value="Indus Business School Pune (IIEBM)">Indus Business School Pune (IIEBM)</option>
+            <option value="Pune Institute of Business Management (PIBM Pune)">Pune Institute of Business Management (PIBM Pune)</option>
+            <option value="Imperial School of Banking and Management Studies (ISBMS), Pune">Imperial School of Banking and Management Studies (ISBMS), Pune</option>
+            <option value="Lexicon Management Institute of Leadership and Excellence (Lexicon MILE), Pune">Lexicon Management Institute of Leadership and Excellence (Lexicon MILE), Pune</option>
+            <option value="ISMS Pune">ISMS Pune</option>
             <option value="Kirloskar Institute">Kirloskar Institute</option>
             <option value="LIBA Chennai">LIBA Chennai</option>
             <option value="LPU Online">LPU Online</option>
@@ -876,7 +1086,6 @@ footer{background:#060D1F;padding:60px 5vw 28px;color:rgba(255,255,255,.38)}
             <option value="Symbiosis SIBM">Symbiosis SIBM</option>
             <option value="Welingkar Bangalore">Welingkar Bangalore</option>
             <option value="Welingkar Mumbai">Welingkar Mumbai</option>
-            <option value="Woxsen Online">Woxsen Online</option>
             <option value="Woxsen University">Woxsen University</option>
             <option value="XIM University">XIM University</option>
             <option value="XIMB Bhubaneswar">XIMB Bhubaneswar</option>
@@ -1086,8 +1295,8 @@ footer{background:#060D1F;padding:60px 5vw 28px;color:rgba(255,255,255,.38)}
 
 <script>
 // ── College & city data ──
-const COLLEGES = {"cat_0": {"name": "IIM Ahmedabad", "city": "Ahmedabad", "program": "MBA / PGP", "fees": "23 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "28 - 35 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_1": {"name": "IIM Bangalore", "city": "Bangalore", "program": "MBA / PGP", "fees": "23 Lacs | 21 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 32 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_2": {"name": "IIM Calcutta", "city": "Kolkata", "program": "MBA / PGDM", "fees": "22 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "25 - 30 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_3": {"name": "IIM Lucknow", "city": "Lucknow", "program": "MBA / PGP", "fees": "19 Lacs | 17 Lacs", "campuses": "Main Campus", "avg_pkg": "22 - 28 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_4": {"name": "IIM Kozhikode", "city": "Kozhikode", "program": "MBA / PGP", "fees": "18 Lacs | 16 Lacs", "campuses": "Main Campus", "avg_pkg": "20 - 25 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_5": {"name": "IIM Indore", "city": "Indore", "program": "MBA / PGP", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "18 - 24 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_6": {"name": "MDI Gurgaon", "city": "Gurugram", "program": "PGDM", "fees": "21 Lacs | 19 Lacs", "campuses": "Main Campus", "avg_pkg": "20 - 27 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_7": {"name": "IMI Bhubaneswar", "city": "Bhubaneswar", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_8": {"name": "IMI Kolkata", "city": "Kolkata", "program": "PGDM", "fees": "13 Lacs | 11 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 15 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_9": {"name": "BIMTECH Greater Noida", "city": "Noida", "program": "PGDM", "fees": "11 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_10": {"name": "Alliance University", "city": "Bangalore", "program": "MBA", "fees": "15 Lacs | 11 Lacs", "campuses": "Central Campus | City Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_11": {"name": "Christ University", "city": "Bangalore", "program": "MBA", "fees": "14 Lacs | 12 Lacs", "campuses": "Central Campus | Bannerghatta", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_12": {"name": "Woxsen University", "city": "Hyderabad", "program": "MBA", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_13": {"name": "DY Patil University", "city": "Mumbai", "program": "MBA", "fees": "10 Lacs | 8 Lacs", "campuses": "Navi Mumbai | Pune", "avg_pkg": "6 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_14": {"name": "IFIM Business School", "city": "Bangalore", "program": "PGDM", "fees": "11 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_15": {"name": "Kirloskar Institute", "city": "Pune", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_0": {"name": "XLRI Jamshedpur", "city": "Jamshedpur", "program": "PGDM (BM / HRM)", "fees": "24 Lacs | 22 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 34 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_1": {"name": "XIM University", "city": "Bhubaneswar", "program": "MBA", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "12 - 18 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_2": {"name": "IMI Delhi", "city": "Delhi", "program": "PGDM", "fees": "18 Lacs | 16 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_3": {"name": "XIMB Bhubaneswar", "city": "Bhubaneswar", "program": "MBA", "fees": "15 Lacs | 13 Lacs", "campuses": "Main Campus", "avg_pkg": "11 - 16 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_4": {"name": "LIBA Chennai", "city": "Chennai", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 13 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_5": {"name": "XIME Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "10 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_6": {"name": "Welingkar Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "13 Lacs | 11 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 13 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_7": {"name": "SP Jain Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_8": {"name": "K J Somaiya", "city": "Mumbai", "program": "MBA", "fees": "14 Lacs | 12 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_9": {"name": "GIM Goa", "city": "Goa", "program": "PGDM", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "11 - 17 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_10": {"name": "FORE School Delhi", "city": "Delhi", "program": "PGDM", "fees": "15 Lacs | 13 Lacs", "campuses": "Main Campus", "avg_pkg": "10 - 15 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_11": {"name": "BIMM Pune", "city": "Pune", "program": "PGDM", "fees": "9 Lacs | 8 Lacs", "campuses": "Main Campus", "avg_pkg": "6 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_0": {"name": "Symbiosis SCMHRD", "city": "Pune", "program": "MBA", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_1": {"name": "Symbiosis SIBM", "city": "Pune", "program": "MBA", "fees": "18 Lacs | 16 Lacs", "campuses": "Pune | Bengaluru | Hyderabad", "avg_pkg": "15 - 22 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_2": {"name": "Welingkar Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 13 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_3": {"name": "JBIMS Mumbai", "city": "Mumbai", "program": "MMS", "fees": "2 Lacs | 1.5 Lacs", "campuses": "Main Campus", "avg_pkg": "18 - 25 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_4": {"name": "PUMBA Pune", "city": "Pune", "program": "MBA", "fees": "3 Lacs | 2.5 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_5": {"name": "MET Institute Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "10 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_6": {"name": "IPE Hyderabad", "city": "Hyderabad", "program": "PGDM", "fees": "9 Lacs | 8 Lacs", "campuses": "Main Campus", "avg_pkg": "6 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_7": {"name": "BIMTECH Greater Noida", "city": "Noida", "program": "PGDM", "fees": "11 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_8": {"name": "IMT Nagpur", "city": "Nagpur", "program": "PGDM", "fees": "10 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_9": {"name": "Alliance University", "city": "Bangalore", "program": "MBA", "fees": "15 Lacs | 11 Lacs", "campuses": "Central Campus | City Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_10": {"name": "Woxsen University", "city": "Hyderabad", "program": "MBA", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_11": {"name": "K J Somaiya", "city": "Mumbai", "program": "MBA", "fees": "14 Lacs | 12 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_0": {"name": "IIM Ahmedabad (#1)", "city": "Ahmedabad", "program": "MBA / PGP", "fees": "23 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "28 - 35 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_1": {"name": "IIM Bangalore (#2)", "city": "Bangalore", "program": "MBA / PGP", "fees": "23 Lacs | 21 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 32 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_2": {"name": "IIM Calcutta (#3)", "city": "Kolkata", "program": "MBA / PGDM", "fees": "22 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "25 - 30 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_3": {"name": "IIM Kozhikode", "city": "Kozhikode", "program": "MBA / PGP", "fees": "18 Lacs | 16 Lacs", "campuses": "Main Campus", "avg_pkg": "20 - 25 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_4": {"name": "XLRI Jamshedpur", "city": "Jamshedpur", "program": "PGDM (BM / HRM)", "fees": "24 Lacs | 22 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 34 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_5": {"name": "MDI Gurgaon", "city": "Gurugram", "program": "PGDM", "fees": "21 Lacs | 19 Lacs", "campuses": "Main Campus", "avg_pkg": "20 - 27 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_6": {"name": "SPJIMR Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "20 Lacs | 18 Lacs", "campuses": "Main Campus", "avg_pkg": "22 - 28 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_7": {"name": "IMT Ghaziabad", "city": "Delhi", "program": "PGDM", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "12 - 18 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_8": {"name": "Symbiosis SCMHRD", "city": "Pune", "program": "MBA", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_9": {"name": "XIM University", "city": "Bhubaneswar", "program": "MBA", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "12 - 18 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_10": {"name": "XIMB Bhubaneswar", "city": "Bhubaneswar", "program": "MBA", "fees": "15 Lacs | 13 Lacs", "campuses": "Main Campus", "avg_pkg": "11 - 16 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_11": {"name": "FORE School Delhi", "city": "Delhi", "program": "PGDM", "fees": "15 Lacs | 13 Lacs", "campuses": "Main Campus", "avg_pkg": "10 - 15 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_0": {"name": "NMIMS Online", "city": "Mumbai", "program": "MBA (Online)", "fees": "2.5 Lacs | 2 Lacs", "campuses": "Online", "avg_pkg": "6 - 12 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_1": {"name": "Amity Online", "city": "Noida", "program": "MBA (Online)", "fees": "1.8 Lacs | 1.5 Lacs", "campuses": "Online", "avg_pkg": "5 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_2": {"name": "Manipal Online", "city": "Bangalore", "program": "MBA (Online)", "fees": "1.6 Lacs | 1.4 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_3": {"name": "Chandigarh University", "city": "Chandigarh", "program": "MBA (Online)", "fees": "1.4 Lacs | 1.2 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_4": {"name": "LPU Online", "city": "Delhi", "program": "MBA (Online)", "fees": "1.3 Lacs | 1.1 Lacs", "campuses": "Online", "avg_pkg": "4 - 8 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_5": {"name": "Jain University Online", "city": "Bangalore", "program": "MBA (Online)", "fees": "1.5 Lacs | 1.3 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_6": {"name": "Alliance Online", "city": "Bangalore", "program": "MBA (Online)", "fees": "1.6 Lacs | 1.4 Lacs", "campuses": "Online", "avg_pkg": "5 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_7": {"name": "DY Patil Online", "city": "Mumbai", "program": "MBA (Online)", "fees": "1.4 Lacs | 1.2 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_8": {"name": "Woxsen Online", "city": "Hyderabad", "program": "MBA (Online)", "fees": "1.8 Lacs | 1.5 Lacs", "campuses": "Online", "avg_pkg": "6 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_9": {"name": "Symbiosis Online", "city": "Pune", "program": "MBA (Online)", "fees": "2 Lacs | 1.8 Lacs", "campuses": "Online", "avg_pkg": "6 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}};
-const CITY_MAP = {"Ahmedabad": [{"name": "IIM Ahmedabad", "city": "Ahmedabad", "program": "MBA / PGP", "fees": "23 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "28 - 35 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_0"}, {"name": "IIM Ahmedabad (#1)", "city": "Ahmedabad", "program": "MBA / PGP", "fees": "23 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "28 - 35 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "nirf_0"}], "Bangalore": [{"name": "IIM Bangalore", "city": "Bangalore", "program": "MBA / PGP", "fees": "23 Lacs | 21 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 32 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_1"}, {"name": "Alliance University", "city": "Bangalore", "program": "MBA", "fees": "15 Lacs | 11 Lacs", "campuses": "Central Campus | City Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_10"}, {"name": "Christ University", "city": "Bangalore", "program": "MBA", "fees": "14 Lacs | 12 Lacs", "campuses": "Central Campus | Bannerghatta", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_11"}, {"name": "IFIM Business School", "city": "Bangalore", "program": "PGDM", "fees": "11 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_14"}, {"name": "XIME Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "10 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_5"}, {"name": "Welingkar Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 13 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_2"}, {"name": "IIM Bangalore (#2)", "city": "Bangalore", "program": "MBA / PGP", "fees": "23 Lacs | 21 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 32 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "nirf_1"}, {"name": "Manipal Online", "city": "Bangalore", "program": "MBA (Online)", "fees": "1.6 Lacs | 1.4 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_2"}, {"name": "Jain University Online", "city": "Bangalore", "program": "MBA (Online)", "fees": "1.5 Lacs | 1.3 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_5"}, {"name": "Alliance Online", "city": "Bangalore", "program": "MBA (Online)", "fees": "1.6 Lacs | 1.4 Lacs", "campuses": "Online", "avg_pkg": "5 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_6"}], "Kolkata": [{"name": "IIM Calcutta", "city": "Kolkata", "program": "MBA / PGDM", "fees": "22 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "25 - 30 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_2"}, {"name": "IMI Kolkata", "city": "Kolkata", "program": "PGDM", "fees": "13 Lacs | 11 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 15 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_8"}, {"name": "IIM Calcutta (#3)", "city": "Kolkata", "program": "MBA / PGDM", "fees": "22 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "25 - 30 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "nirf_2"}], "Lucknow": [{"name": "IIM Lucknow", "city": "Lucknow", "program": "MBA / PGP", "fees": "19 Lacs | 17 Lacs", "campuses": "Main Campus", "avg_pkg": "22 - 28 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_3"}], "Kozhikode": [{"name": "IIM Kozhikode", "city": "Kozhikode", "program": "MBA / PGP", "fees": "18 Lacs | 16 Lacs", "campuses": "Main Campus", "avg_pkg": "20 - 25 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_4"}], "Indore": [{"name": "IIM Indore", "city": "Indore", "program": "MBA / PGP", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "18 - 24 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_5"}], "Gurugram": [{"name": "MDI Gurgaon", "city": "Gurugram", "program": "PGDM", "fees": "21 Lacs | 19 Lacs", "campuses": "Main Campus", "avg_pkg": "20 - 27 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_6"}], "Bhubaneswar": [{"name": "IMI Bhubaneswar", "city": "Bhubaneswar", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_7"}, {"name": "XIM University", "city": "Bhubaneswar", "program": "MBA", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "12 - 18 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_1"}, {"name": "XIMB Bhubaneswar", "city": "Bhubaneswar", "program": "MBA", "fees": "15 Lacs | 13 Lacs", "campuses": "Main Campus", "avg_pkg": "11 - 16 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_3"}], "Noida": [{"name": "BIMTECH Greater Noida", "city": "Noida", "program": "PGDM", "fees": "11 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_9"}, {"name": "Amity Online", "city": "Noida", "program": "MBA (Online)", "fees": "1.8 Lacs | 1.5 Lacs", "campuses": "Online", "avg_pkg": "5 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_1"}], "Hyderabad": [{"name": "Woxsen University", "city": "Hyderabad", "program": "MBA", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_12"}, {"name": "IPE Hyderabad", "city": "Hyderabad", "program": "PGDM", "fees": "9 Lacs | 8 Lacs", "campuses": "Main Campus", "avg_pkg": "6 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_6"}, {"name": "Woxsen Online", "city": "Hyderabad", "program": "MBA (Online)", "fees": "1.8 Lacs | 1.5 Lacs", "campuses": "Online", "avg_pkg": "6 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_8"}], "Mumbai": [{"name": "DY Patil University", "city": "Mumbai", "program": "MBA", "fees": "10 Lacs | 8 Lacs", "campuses": "Navi Mumbai | Pune", "avg_pkg": "6 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_13"}, {"name": "Welingkar Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "13 Lacs | 11 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 13 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_6"}, {"name": "SP Jain Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_7"}, {"name": "K J Somaiya", "city": "Mumbai", "program": "MBA", "fees": "14 Lacs | 12 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_8"}, {"name": "JBIMS Mumbai", "city": "Mumbai", "program": "MMS", "fees": "2 Lacs | 1.5 Lacs", "campuses": "Main Campus", "avg_pkg": "18 - 25 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_3"}, {"name": "MET Institute Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "10 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_5"}, {"name": "SPJIMR Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "20 Lacs | 18 Lacs", "campuses": "Main Campus", "avg_pkg": "22 - 28 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "nirf_6"}, {"name": "NMIMS Online", "city": "Mumbai", "program": "MBA (Online)", "fees": "2.5 Lacs | 2 Lacs", "campuses": "Online", "avg_pkg": "6 - 12 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_0"}, {"name": "DY Patil Online", "city": "Mumbai", "program": "MBA (Online)", "fees": "1.4 Lacs | 1.2 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_7"}], "Pune": [{"name": "Kirloskar Institute", "city": "Pune", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cat_15"}, {"name": "BIMM Pune", "city": "Pune", "program": "PGDM", "fees": "9 Lacs | 8 Lacs", "campuses": "Main Campus", "avg_pkg": "6 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_11"}, {"name": "Symbiosis SCMHRD", "city": "Pune", "program": "MBA", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_0"}, {"name": "Symbiosis SIBM", "city": "Pune", "program": "MBA", "fees": "18 Lacs | 16 Lacs", "campuses": "Pune | Bengaluru | Hyderabad", "avg_pkg": "15 - 22 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_1"}, {"name": "PUMBA Pune", "city": "Pune", "program": "MBA", "fees": "3 Lacs | 2.5 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_4"}, {"name": "Symbiosis Online", "city": "Pune", "program": "MBA (Online)", "fees": "2 Lacs | 1.8 Lacs", "campuses": "Online", "avg_pkg": "6 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_9"}], "Jamshedpur": [{"name": "XLRI Jamshedpur", "city": "Jamshedpur", "program": "PGDM (BM / HRM)", "fees": "24 Lacs | 22 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 34 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_0"}], "Delhi": [{"name": "IMI Delhi", "city": "Delhi", "program": "PGDM", "fees": "18 Lacs | 16 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_2"}, {"name": "FORE School Delhi", "city": "Delhi", "program": "PGDM", "fees": "15 Lacs | 13 Lacs", "campuses": "Main Campus", "avg_pkg": "10 - 15 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_10"}, {"name": "IMT Ghaziabad", "city": "Delhi", "program": "PGDM", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "12 - 18 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "nirf_7"}, {"name": "LPU Online", "city": "Delhi", "program": "MBA (Online)", "fees": "1.3 Lacs | 1.1 Lacs", "campuses": "Online", "avg_pkg": "4 - 8 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_4"}], "Chennai": [{"name": "LIBA Chennai", "city": "Chennai", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 13 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_4"}], "Goa": [{"name": "GIM Goa", "city": "Goa", "program": "PGDM", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "11 - 17 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_9"}], "Nagpur": [{"name": "IMT Nagpur", "city": "Nagpur", "program": "PGDM", "fees": "10 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_8"}], "Chandigarh": [{"name": "Chandigarh University", "city": "Chandigarh", "program": "MBA (Online)", "fees": "1.4 Lacs | 1.2 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_3"}]};
+const COLLEGES = {"cat_0": {"name": "IIM Ahmedabad", "city": "Ahmedabad", "program": "MBA / PGP", "fees": "23 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "28 - 35 LPA", "yt": "https://www.youtube.com/embed/pSQnFDp3yZE"}, "cat_1": {"name": "IIM Bangalore", "city": "Bangalore", "program": "MBA / PGP", "fees": "23 Lacs | 21 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 32 LPA", "yt": "https://www.youtube.com/embed/-8eJ6mCYnrQ"}, "cat_2": {"name": "IIM Calcutta", "city": "Kolkata", "program": "MBA / PGDM", "fees": "22 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "25 - 30 LPA", "yt": "https://www.youtube.com/embed/GpEgQslgHoo"}, "cat_3": {"name": "IIM Lucknow", "city": "Lucknow", "program": "MBA / PGP", "fees": "19 Lacs | 17 Lacs", "campuses": "Main Campus", "avg_pkg": "22 - 28 LPA", "yt": "https://www.youtube.com/embed/7pcP65YluKk"}, "cat_4": {"name": "IIM Kozhikode", "city": "Kozhikode", "program": "MBA / PGP", "fees": "18 Lacs | 16 Lacs", "campuses": "Main Campus", "avg_pkg": "20 - 25 LPA", "yt": "https://www.youtube.com/embed/yE9EYcDfYHQ"}, "cat_5": {"name": "IIM Indore", "city": "Indore", "program": "MBA / PGP", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "18 - 24 LPA", "yt": "https://www.youtube.com/embed/YhhZLIPgwQA"}, "cat_6": {"name": "MDI Gurgaon", "city": "Gurugram", "program": "PGDM", "fees": "21 Lacs | 19 Lacs", "campuses": "Main Campus", "avg_pkg": "20 - 27 LPA", "yt": "https://www.youtube.com/embed/3ft65yI2CdE"}, "cat_7": {"name": "IMI Bhubaneswar", "city": "Bhubaneswar", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 14 LPA", "yt": "https://www.youtube.com/embed/mgfNKKeKrYc"}, "cat_8": {"name": "IMI Kolkata", "city": "Kolkata", "program": "PGDM", "fees": "13 Lacs | 11 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 15 LPA", "yt": "https://www.youtube.com/embed/KhnhxRVLt6s"}, "cat_9": {"name": "BIMTECH Greater Noida", "city": "Noida", "program": "PGDM", "fees": "11 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/RrQX0B4_8W8"}, "cat_10": {"name": "Alliance University", "city": "Bangalore", "program": "MBA", "fees": "15 Lacs | 11 Lacs", "campuses": "Central Campus | City Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/zCZKu8D_260"}, "cat_11": {"name": "Christ University", "city": "Bangalore", "program": "MBA", "fees": "14 Lacs | 12 Lacs", "campuses": "Central Campus | Bannerghatta", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/r_LECMbqkNw"}, "cat_12": {"name": "Woxsen University", "city": "Hyderabad", "program": "MBA", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 14 LPA", "yt": "https://www.youtube.com/embed/Dr3guNv3H0A"}, "cat_14": {"name": "IFIM Business School", "city": "Bangalore", "program": "PGDM", "fees": "11 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/ziSWQ6ThjKk"}, "cat_15": {"name": "Kirloskar Institute", "city": "Pune", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/bcDF5GcOOHA"}, "xat_0": {"name": "XLRI Jamshedpur", "city": "Jamshedpur", "program": "PGDM (BM / HRM)", "fees": "24 Lacs | 22 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 34 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_1": {"name": "XIM University", "city": "Bhubaneswar", "program": "MBA", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "12 - 18 LPA", "yt": "https://www.youtube.com/embed/qm55doR0j7E"}, "xat_2": {"name": "IMI Delhi", "city": "Delhi", "program": "PGDM", "fees": "18 Lacs | 16 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_3": {"name": "XIMB Bhubaneswar", "city": "Bhubaneswar", "program": "MBA", "fees": "15 Lacs | 13 Lacs", "campuses": "Main Campus", "avg_pkg": "11 - 16 LPA", "yt": "https://www.youtube.com/embed/JIKehMWi_a4"}, "xat_4": {"name": "LIBA Chennai", "city": "Chennai", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 13 LPA", "yt": "https://www.youtube.com/embed/tpTeEhhWIxU"}, "xat_5": {"name": "XIME Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "10 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/URnyYKKDcaQ"}, "xat_6": {"name": "Welingkar Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "13 Lacs | 11 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 13 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_7": {"name": "SP Jain Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_8": {"name": "K J Somaiya", "city": "Mumbai", "program": "MBA", "fees": "14 Lacs | 12 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_9": {"name": "GIM Goa", "city": "Goa", "program": "PGDM", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "11 - 17 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_10": {"name": "FORE School Delhi", "city": "Delhi", "program": "PGDM", "fees": "15 Lacs | 13 Lacs", "campuses": "Main Campus", "avg_pkg": "10 - 15 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "xat_11": {"name": "BIMM Pune", "city": "Pune", "program": "PGDM", "fees": "9 Lacs | 8 Lacs", "campuses": "Main Campus", "avg_pkg": "6 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_0": {"name": "Symbiosis SCMHRD", "city": "Pune", "program": "MBA", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_1": {"name": "Symbiosis SIBM", "city": "Pune", "program": "MBA", "fees": "18 Lacs | 16 Lacs", "campuses": "Pune | Bengaluru | Hyderabad", "avg_pkg": "15 - 22 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_2": {"name": "Welingkar Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 13 LPA", "yt": "https://www.youtube.com/embed/wQQm3lO_VoE"}, "cmat_3": {"name": "JBIMS Mumbai", "city": "Mumbai", "program": "MMS", "fees": "2 Lacs | 1.5 Lacs", "campuses": "Main Campus", "avg_pkg": "18 - 25 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_4": {"name": "PUMBA Pune", "city": "Pune", "program": "MBA", "fees": "3 Lacs | 2.5 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_5": {"name": "MET Institute Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "10 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_6": {"name": "IPE Hyderabad", "city": "Hyderabad", "program": "PGDM", "fees": "9 Lacs | 8 Lacs", "campuses": "Main Campus", "avg_pkg": "6 - 10 LPA", "yt": "https://www.youtube.com/embed/Jj7SYpogiPI"}, "cmat_7": {"name": "BIMTECH Greater Noida", "city": "Noida", "program": "PGDM", "fees": "11 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/RrQX0B4_8W8"}, "cmat_8": {"name": "IMT Nagpur", "city": "Nagpur", "program": "PGDM", "fees": "10 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cmat_9": {"name": "Alliance University", "city": "Bangalore", "program": "MBA", "fees": "15 Lacs | 11 Lacs", "campuses": "Central Campus | City Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/zCZKu8D_260"}, "cmat_10": {"name": "Woxsen University", "city": "Hyderabad", "program": "MBA", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 14 LPA", "yt": "https://www.youtube.com/embed/Dr3guNv3H0A"}, "cmat_11": {"name": "K J Somaiya", "city": "Mumbai", "program": "MBA", "fees": "14 Lacs | 12 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_0": {"name": "IIM Ahmedabad (#1)", "city": "Ahmedabad", "program": "MBA / PGP", "fees": "23 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "28 - 35 LPA", "yt": "https://www.youtube.com/embed/pSQnFDp3yZE"}, "nirf_1": {"name": "IIM Bangalore (#2)", "city": "Bangalore", "program": "MBA / PGP", "fees": "23 Lacs | 21 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 32 LPA", "yt": "https://www.youtube.com/embed/-8eJ6mCYnrQ"}, "nirf_2": {"name": "IIM Calcutta (#3)", "city": "Kolkata", "program": "MBA / PGDM", "fees": "22 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "25 - 30 LPA", "yt": "https://www.youtube.com/embed/GpEgQslgHoo"}, "nirf_3": {"name": "IIM Kozhikode", "city": "Kozhikode", "program": "MBA / PGP", "fees": "18 Lacs | 16 Lacs", "campuses": "Main Campus", "avg_pkg": "20 - 25 LPA", "yt": "https://www.youtube.com/embed/yE9EYcDfYHQ"}, "nirf_4": {"name": "XLRI Jamshedpur", "city": "Jamshedpur", "program": "PGDM (BM / HRM)", "fees": "24 Lacs | 22 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 34 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_5": {"name": "MDI Gurgaon", "city": "Gurugram", "program": "PGDM", "fees": "21 Lacs | 19 Lacs", "campuses": "Main Campus", "avg_pkg": "20 - 27 LPA", "yt": "https://www.youtube.com/embed/3ft65yI2CdE"}, "nirf_6": {"name": "SPJIMR Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "20 Lacs | 18 Lacs", "campuses": "Main Campus", "avg_pkg": "22 - 28 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_7": {"name": "IMT Ghaziabad", "city": "Delhi", "program": "PGDM", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "12 - 18 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_8": {"name": "Symbiosis SCMHRD", "city": "Pune", "program": "MBA", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "nirf_9": {"name": "XIM University", "city": "Bhubaneswar", "program": "MBA", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "12 - 18 LPA", "yt": "https://www.youtube.com/embed/qm55doR0j7E"}, "nirf_10": {"name": "XIMB Bhubaneswar", "city": "Bhubaneswar", "program": "MBA", "fees": "15 Lacs | 13 Lacs", "campuses": "Main Campus", "avg_pkg": "11 - 16 LPA", "yt": "https://www.youtube.com/embed/JIKehMWi_a4"}, "nirf_11": {"name": "FORE School Delhi", "city": "Delhi", "program": "PGDM", "fees": "15 Lacs | 13 Lacs", "campuses": "Main Campus", "avg_pkg": "10 - 15 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_0": {"name": "NMIMS Online", "city": "Mumbai", "program": "MBA (Online)", "fees": "2.5 Lacs | 2 Lacs", "campuses": "Online", "avg_pkg": "6 - 12 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_1": {"name": "Amity Online", "city": "Noida", "program": "MBA (Online)", "fees": "1.8 Lacs | 1.5 Lacs", "campuses": "Online", "avg_pkg": "5 - 10 LPA", "yt": "https://www.youtube.com/embed/K25Q2yDl-9Y"}, "online2_2": {"name": "Manipal Online", "city": "Jaipur", "program": "MBA (Online)", "fees": "1.6 Lacs | 1.4 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_3": {"name": "Chandigarh University", "city": "Chandigarh", "program": "MBA (Online)", "fees": "1.4 Lacs | 1.2 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_4": {"name": "LPU Online", "city": "Delhi", "program": "MBA (Online)", "fees": "1.3 Lacs | 1.1 Lacs", "campuses": "Online", "avg_pkg": "4 - 8 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_5": {"name": "Jain University Online", "city": "Bangalore", "program": "MBA (Online)", "fees": "1.5 Lacs | 1.3 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/xLUXao18fs0"}, "online2_6": {"name": "Alliance Online", "city": "Bangalore", "program": "MBA (Online)", "fees": "1.6 Lacs | 1.4 Lacs", "campuses": "Online", "avg_pkg": "5 - 10 LPA", "yt": "https://www.youtube.com/embed/zCZKu8D_260"}, "online2_7": {"name": "DY Patil Online", "city": "Mumbai", "program": "MBA (Online)", "fees": "1.4 Lacs | 1.2 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "online2_9": {"name": "Symbiosis Online", "city": "Pune", "program": "MBA (Online)", "fees": "2 Lacs | 1.8 Lacs", "campuses": "Online", "avg_pkg": "6 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ"}, "cat_16": {"name": "IZEE Business School, Bengaluru", "city": "Bangalore", "program": "Hybrid MBA", "fees": "7.95 Lacs", "campuses": "Bengaluru", "avg_pkg": "7 - 9 LPA", "yt": "https://www.youtube.com/embed/G-1N6B6xjfw"}, "cat_17": {"name": "GIBS, Bengaluru", "city": "Bangalore", "program": "MBA / PGDM", "fees": "11.6 Lacs | 11.6 Lacs", "campuses": "Bengaluru", "avg_pkg": "8 - 10 LPA", "yt": "https://www.youtube.com/embed/2DnisZT01pw"}, "cat_18": {"name": "ISBR Business School, Bangalore", "city": "Bangalore", "program": "MBA / PGDM", "fees": "11 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/y2CS_Z-XO_E"}, "cat_19": {"name": "International School of Management Excellence (ISME), Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "10.95 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/MlJD8sc0tUc"}, "cat_20": {"name": "International Institute of Business Studies, Bangalore", "city": "Bangalore", "program": "MBA / PGDM", "fees": "10 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/dV1lQV7C5vA"}, "cat_21": {"name": "Indus Business Academy (IBA), Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "11 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/qRBT67hWYuM"}, "cat_22": {"name": "Regional College of Management, Bangalore", "city": "Bangalore", "program": "MBA / PGDM", "fees": "9.7 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/_DEv6SsQk9g"}, "cat_23": {"name": "Ramaiah Institute of Management Studies (RIMS), Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "9.5 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/znqn8Jm1w_k"}, "cat_24": {"name": "Acharya Bangalore B-School, Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "9 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/CPLug4iBD88"}, "cat_25": {"name": "Birla Global University, Bhubaneswar", "city": "Bhubaneswar", "program": "MBA", "fees": "11 Lacs", "campuses": "Bhubaneswar", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/7MewRzjD5SM"}, "cat_26": {"name": "Sri Sri University, Bhubaneswar", "city": "Bhubaneswar", "program": "MBA", "fees": "9 Lacs", "campuses": "Bhubaneswar", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/FO9IFaQYFy0"}, "cat_27": {"name": "Jagadguru Kripalu University, Bhubaneswar", "city": "Bhubaneswar", "program": "MBA", "fees": "5 Lacs", "campuses": "Bhubaneswar", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/wd93hnnarfs"}, "cat_28": {"name": "Doon Business School (DBS Global University), Dehradun", "city": "Dehradun", "program": "MBA", "fees": "7.5 Lakh to 16.6 Lakh", "campuses": "Dehradun", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/WBx_wYiYjCg"}, "cat_29": {"name": "UPES School of Business, Dehradun", "city": "Dehradun", "program": "MBA", "fees": "19.11 Lakhs to 22.95 Lakhs", "campuses": "Dehradun", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/A1o825GiS3k"}, "cat_30": {"name": "Jaipuria Institute of Management, Jaipur", "city": "Jaipur", "program": "MBA", "fees": "14.75 Lakh to 16.6 Lakh", "campuses": "Jaipur", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/pyhZiiEdSUY"}, "cat_31": {"name": "BML Munjal University", "city": "Gurugram", "program": "MBA", "fees": "15.1 Lakh", "campuses": "Gurugram", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/WX2zDnPzxBc"}, "cat_32": {"name": "IILM University, Gurugram", "city": "Gurugram", "program": "MBA", "fees": "12.90 Lakhs", "campuses": "Gurugram", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/4v3HgolT2sA"}, "cat_33": {"name": "GNIOT Institute of Management Studies (GIMS), Greater Noida", "city": "Noida", "program": "MBA / PGDM", "fees": "8.5 Lakh", "campuses": "Greater Noida", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/PHOpLYrU0Dg"}, "cat_34": {"name": "Noida International University (NIU), Noida", "city": "Noida", "program": "MBA", "fees": "4 Lakh to 6.7 Lakh", "campuses": "Noida", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/zFkO5ZljKdU"}, "cat_35": {"name": "Lloyd Business School, Greater Noida", "city": "Noida", "program": "MBA / PGDM", "fees": "4 Lakh to 9 Lakh", "campuses": "Greater Noida", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/Wwux6BhSewI"}, "cat_36": {"name": "Calcutta Business School (CBS), Kolkata", "city": "Kolkata", "program": "PGDM", "fees": "7.45 Lakh", "campuses": "Kolkata", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/vww0Scwjhgk"}, "cat_37": {"name": "United World School of Business (IQ City UWSB), Kolkata", "city": "Kolkata", "program": "PGDM", "fees": "8.5 Lakh", "campuses": "Kolkata", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/JLfZYxT0ClY"}, "cat_38": {"name": "Praxis Business School, Kolkata", "city": "Kolkata", "program": "PGDM", "fees": "11.30 Lakh", "campuses": "Kolkata", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/Q4faGwHpl7s"}, "cat_39": {"name": "Bengal Institute of Business Studies (BIBS), Kolkata", "city": "Kolkata", "program": "PGDM", "fees": "6.08 Lakh", "campuses": "Kolkata", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/FebHsua4Lyk"}, "cat_40": {"name": "MDI Murshidabad", "city": "Kolkata", "program": "Contact us for details", "fees": "16.4 Lakh", "campuses": "Murshidabad", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/AqhsKS-Ojxg"}, "cat_41": {"name": "Siva Sivani Institute of Management (SSIM), Hyderabad", "city": "Hyderabad", "program": "PGDM", "fees": "8 Lakh", "campuses": "Hyderabad", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/23OA6n5f-ec"}, "cat_42": {"name": "Vignana Jyothi Institute of Management (VJIM), Hyderabad", "city": "Hyderabad", "program": "PGDM", "fees": "9 Lakh", "campuses": "Hyderabad", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/xaDGcvQCrgQ"}, "cat_43": {"name": "Ashoka School of Business, Hyderabad", "city": "Hyderabad", "program": "PGDM", "fees": "7.4 Lakh", "campuses": "Hyderabad", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/Ekl_7TSeEY0"}, "cat_44": {"name": "RIIM Pune (Ramachandran International Institute of Management)", "city": "Pune", "program": "MBA / PGDM", "fees": "6.5 Lakh (MBA) | 8.5 Lakh (PGDM)", "campuses": "Pune", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/EZkzqGQrhB4"}, "cat_45": {"name": "Indus Business School Pune (IIEBM)", "city": "Pune", "program": "PGDM", "fees": "9.25 Lakh", "campuses": "Pune", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/oH5SnnGodr8"}, "cat_46": {"name": "Pune Institute of Business Management (PIBM Pune)", "city": "Pune", "program": "MBA / PGDM", "fees": "9 Lakh", "campuses": "Pune", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/gkgje53Yp9w"}, "cat_47": {"name": "Imperial School of Banking and Management Studies (ISBMS), Pune", "city": "Pune", "program": "PGDM", "fees": "8 Lakh", "campuses": "Pune", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/uadfXsQWuRM"}, "cat_48": {"name": "Lexicon Management Institute of Leadership and Excellence (Lexicon MILE), Pune", "city": "Pune", "program": "PGDM", "fees": "10.8 Lakh", "campuses": "Pune", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/EOM-zvLgSp4"}, "cat_49": {"name": "ISMS Pune", "city": "Pune", "program": "MBA / PGDM", "fees": "6.85 Lakhs to 16 Lakhs", "campuses": "Pune", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/Mae-q5o5Adg"}};
+const CITY_MAP = {"Ahmedabad": [{"name": "IIM Ahmedabad", "city": "Ahmedabad", "program": "MBA / PGP", "fees": "23 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "28 - 35 LPA", "yt": "https://www.youtube.com/embed/pSQnFDp3yZE", "id": "cat_0"}, {"name": "IIM Ahmedabad (#1)", "city": "Ahmedabad", "program": "MBA / PGP", "fees": "23 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "28 - 35 LPA", "yt": "https://www.youtube.com/embed/pSQnFDp3yZE", "id": "nirf_0"}], "Bangalore": [{"name": "ISBR Business School, Bangalore", "city": "Bangalore", "program": "MBA / PGDM", "fees": "11 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/y2CS_Z-XO_E", "id": "cat_18"}, {"name": "International School of Management Excellence (ISME), Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "10.95 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/MlJD8sc0tUc", "id": "cat_19"}, {"name": "International Institute of Business Studies, Bangalore", "city": "Bangalore", "program": "MBA / PGDM", "fees": "10 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/dV1lQV7C5vA", "id": "cat_20"}, {"name": "Indus Business Academy (IBA), Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "11 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/qRBT67hWYuM", "id": "cat_21"}, {"name": "Regional College of Management, Bangalore", "city": "Bangalore", "program": "MBA / PGDM", "fees": "9.7 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/_DEv6SsQk9g", "id": "cat_22"}, {"name": "Ramaiah Institute of Management Studies (RIMS), Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "9.5 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/znqn8Jm1w_k", "id": "cat_23"}, {"name": "Acharya Bangalore B-School, Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "9 Lacs", "campuses": "Bangalore", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/CPLug4iBD88", "id": "cat_24"}, {"name": "IZEE Business School, Bengaluru", "city": "Bangalore", "program": "Hybrid MBA", "fees": "7.95 Lacs", "campuses": "Bengaluru", "avg_pkg": "7 - 9 LPA", "yt": "https://www.youtube.com/embed/G-1N6B6xjfw", "id": "cat_16"}, {"name": "GIBS, Bengaluru", "city": "Bangalore", "program": "MBA / PGDM", "fees": "11.6 Lacs | 11.6 Lacs", "campuses": "Bengaluru", "avg_pkg": "8 - 10 LPA", "yt": "https://www.youtube.com/embed/2DnisZT01pw", "id": "cat_17"}, {"name": "IIM Bangalore", "city": "Bangalore", "program": "MBA / PGP", "fees": "23 Lacs | 21 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 32 LPA", "yt": "https://www.youtube.com/embed/-8eJ6mCYnrQ", "id": "cat_1"}, {"name": "Alliance University", "city": "Bangalore", "program": "MBA", "fees": "15 Lacs | 11 Lacs", "campuses": "Central Campus | City Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/zCZKu8D_260", "id": "cat_10"}, {"name": "Christ University", "city": "Bangalore", "program": "MBA", "fees": "14 Lacs | 12 Lacs", "campuses": "Central Campus | Bannerghatta", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/r_LECMbqkNw", "id": "cat_11"}, {"name": "IFIM Business School", "city": "Bangalore", "program": "PGDM", "fees": "11 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/ziSWQ6ThjKk", "id": "cat_14"}, {"name": "XIME Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "10 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/URnyYKKDcaQ", "id": "xat_5"}, {"name": "Welingkar Bangalore", "city": "Bangalore", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 13 LPA", "yt": "https://www.youtube.com/embed/wQQm3lO_VoE", "id": "cmat_2"}, {"name": "IIM Bangalore (#2)", "city": "Bangalore", "program": "MBA / PGP", "fees": "23 Lacs | 21 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 32 LPA", "yt": "https://www.youtube.com/embed/-8eJ6mCYnrQ", "id": "nirf_1"}, {"name": "Jain University Online", "city": "Bangalore", "program": "MBA (Online)", "fees": "1.5 Lacs | 1.3 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/xLUXao18fs0", "id": "online2_5"}, {"name": "Alliance Online", "city": "Bangalore", "program": "MBA (Online)", "fees": "1.6 Lacs | 1.4 Lacs", "campuses": "Online", "avg_pkg": "5 - 10 LPA", "yt": "https://www.youtube.com/embed/zCZKu8D_260", "id": "online2_6"}], "Kolkata": [{"name": "IIM Calcutta", "city": "Kolkata", "program": "MBA / PGDM", "fees": "22 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "25 - 30 LPA", "yt": "https://www.youtube.com/embed/GpEgQslgHoo", "id": "cat_2"}, {"name": "IMI Kolkata", "city": "Kolkata", "program": "PGDM", "fees": "13 Lacs | 11 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 15 LPA", "yt": "https://www.youtube.com/embed/KhnhxRVLt6s", "id": "cat_8"}, {"name": "IIM Calcutta (#3)", "city": "Kolkata", "program": "MBA / PGDM", "fees": "22 Lacs | 20 Lacs", "campuses": "Main Campus", "avg_pkg": "25 - 30 LPA", "yt": "https://www.youtube.com/embed/GpEgQslgHoo", "id": "nirf_2"}, {"name": "Calcutta Business School (CBS), Kolkata", "city": "Kolkata", "program": "PGDM", "fees": "7.45 Lakh", "campuses": "Kolkata", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/vww0Scwjhgk", "id": "cat_36"}, {"name": "United World School of Business (IQ City UWSB), Kolkata", "city": "Kolkata", "program": "PGDM", "fees": "8.5 Lakh", "campuses": "Kolkata", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/JLfZYxT0ClY", "id": "cat_37"}, {"name": "Praxis Business School, Kolkata", "city": "Kolkata", "program": "PGDM", "fees": "11.30 Lakh", "campuses": "Kolkata", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/Q4faGwHpl7s", "id": "cat_38"}, {"name": "Bengal Institute of Business Studies (BIBS), Kolkata", "city": "Kolkata", "program": "PGDM", "fees": "6.08 Lakh", "campuses": "Kolkata", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/FebHsua4Lyk", "id": "cat_39"}, {"name": "MDI Murshidabad", "city": "Kolkata", "program": "Contact us for details", "fees": "16.4 Lakh", "campuses": "Murshidabad", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/AqhsKS-Ojxg", "id": "cat_40"}], "Lucknow": [{"name": "IIM Lucknow", "city": "Lucknow", "program": "MBA / PGP", "fees": "19 Lacs | 17 Lacs", "campuses": "Main Campus", "avg_pkg": "22 - 28 LPA", "yt": "https://www.youtube.com/embed/7pcP65YluKk", "id": "cat_3"}], "Kozhikode": [{"name": "IIM Kozhikode", "city": "Kozhikode", "program": "MBA / PGP", "fees": "18 Lacs | 16 Lacs", "campuses": "Main Campus", "avg_pkg": "20 - 25 LPA", "yt": "https://www.youtube.com/embed/yE9EYcDfYHQ", "id": "cat_4"}], "Indore": [{"name": "IIM Indore", "city": "Indore", "program": "MBA / PGP", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "18 - 24 LPA", "yt": "https://www.youtube.com/embed/YhhZLIPgwQA", "id": "cat_5"}], "Gurugram": [{"name": "MDI Gurgaon", "city": "Gurugram", "program": "PGDM", "fees": "21 Lacs | 19 Lacs", "campuses": "Main Campus", "avg_pkg": "20 - 27 LPA", "yt": "https://www.youtube.com/embed/3ft65yI2CdE", "id": "cat_6"}, {"name": "BML Munjal University", "city": "Gurugram", "program": "MBA", "fees": "15.1 Lakh", "campuses": "Gurugram", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/WX2zDnPzxBc", "id": "cat_31"}, {"name": "IILM University, Gurugram", "city": "Gurugram", "program": "MBA", "fees": "12.90 Lakhs", "campuses": "Gurugram", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/4v3HgolT2sA", "id": "cat_32"}], "Bhubaneswar": [{"name": "IMI Bhubaneswar", "city": "Bhubaneswar", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 14 LPA", "yt": "https://www.youtube.com/embed/mgfNKKeKrYc", "id": "cat_7"}, {"name": "XIM University", "city": "Bhubaneswar", "program": "MBA", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "12 - 18 LPA", "yt": "https://www.youtube.com/embed/qm55doR0j7E", "id": "xat_1"}, {"name": "XIMB Bhubaneswar", "city": "Bhubaneswar", "program": "MBA", "fees": "15 Lacs | 13 Lacs", "campuses": "Main Campus", "avg_pkg": "11 - 16 LPA", "yt": "https://www.youtube.com/embed/JIKehMWi_a4", "id": "xat_3"}, {"name": "Birla Global University, Bhubaneswar", "city": "Bhubaneswar", "program": "MBA", "fees": "11 Lacs", "campuses": "Bhubaneswar", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/7MewRzjD5SM", "id": "cat_25"}, {"name": "Sri Sri University, Bhubaneswar", "city": "Bhubaneswar", "program": "MBA", "fees": "9 Lacs", "campuses": "Bhubaneswar", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/FO9IFaQYFy0", "id": "cat_26"}, {"name": "Jagadguru Kripalu University, Bhubaneswar", "city": "Bhubaneswar", "program": "MBA", "fees": "5 Lacs", "campuses": "Bhubaneswar", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/wd93hnnarfs", "id": "cat_27"}], "Noida": [{"name": "BIMTECH Greater Noida", "city": "Noida", "program": "PGDM", "fees": "11 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/RrQX0B4_8W8", "id": "cat_9"}, {"name": "Amity Online", "city": "Noida", "program": "MBA (Online)", "fees": "1.8 Lacs | 1.5 Lacs", "campuses": "Online", "avg_pkg": "5 - 10 LPA", "yt": "https://www.youtube.com/embed/K25Q2yDl-9Y", "id": "online2_1"}, {"name": "GNIOT Institute of Management Studies (GIMS), Greater Noida", "city": "Noida", "program": "MBA / PGDM", "fees": "8.5 Lakh", "campuses": "Greater Noida", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/PHOpLYrU0Dg", "id": "cat_33"}, {"name": "Noida International University (NIU), Noida", "city": "Noida", "program": "MBA", "fees": "4 Lakh to 6.7 Lakh", "campuses": "Noida", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/zFkO5ZljKdU", "id": "cat_34"}, {"name": "Lloyd Business School, Greater Noida", "city": "Noida", "program": "MBA / PGDM", "fees": "4 Lakh to 9 Lakh", "campuses": "Greater Noida", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/Wwux6BhSewI", "id": "cat_35"}], "Hyderabad": [{"name": "Woxsen University", "city": "Hyderabad", "program": "MBA", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 14 LPA", "yt": "https://www.youtube.com/embed/Dr3guNv3H0A", "id": "cat_12"}, {"name": "IPE Hyderabad", "city": "Hyderabad", "program": "PGDM", "fees": "9 Lacs | 8 Lacs", "campuses": "Main Campus", "avg_pkg": "6 - 10 LPA", "yt": "https://www.youtube.com/embed/Jj7SYpogiPI", "id": "cmat_6"}, {"name": "Siva Sivani Institute of Management (SSIM), Hyderabad", "city": "Hyderabad", "program": "PGDM", "fees": "8 Lakh", "campuses": "Hyderabad", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/23OA6n5f-ec", "id": "cat_41"}, {"name": "Vignana Jyothi Institute of Management (VJIM), Hyderabad", "city": "Hyderabad", "program": "PGDM", "fees": "9 Lakh", "campuses": "Hyderabad", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/xaDGcvQCrgQ", "id": "cat_42"}, {"name": "Ashoka School of Business, Hyderabad", "city": "Hyderabad", "program": "PGDM", "fees": "7.4 Lakh", "campuses": "Hyderabad", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/Ekl_7TSeEY0", "id": "cat_43"}], "Mumbai": [{"name": "Welingkar Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "13 Lacs | 11 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 13 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_6"}, {"name": "SP Jain Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_7"}, {"name": "K J Somaiya", "city": "Mumbai", "program": "MBA", "fees": "14 Lacs | 12 Lacs", "campuses": "Main Campus", "avg_pkg": "9 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_8"}, {"name": "JBIMS Mumbai", "city": "Mumbai", "program": "MMS", "fees": "2 Lacs | 1.5 Lacs", "campuses": "Main Campus", "avg_pkg": "18 - 25 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_3"}, {"name": "MET Institute Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "10 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_5"}, {"name": "SPJIMR Mumbai", "city": "Mumbai", "program": "PGDM", "fees": "20 Lacs | 18 Lacs", "campuses": "Main Campus", "avg_pkg": "22 - 28 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "nirf_6"}, {"name": "NMIMS Online", "city": "Mumbai", "program": "MBA (Online)", "fees": "2.5 Lacs | 2 Lacs", "campuses": "Online", "avg_pkg": "6 - 12 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_0"}, {"name": "DY Patil Online", "city": "Mumbai", "program": "MBA (Online)", "fees": "1.4 Lacs | 1.2 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_7"}], "Pune": [{"name": "Kirloskar Institute", "city": "Pune", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 12 LPA", "yt": "https://www.youtube.com/embed/bcDF5GcOOHA", "id": "cat_15"}, {"name": "BIMM Pune", "city": "Pune", "program": "PGDM", "fees": "9 Lacs | 8 Lacs", "campuses": "Main Campus", "avg_pkg": "6 - 10 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_11"}, {"name": "Symbiosis SCMHRD", "city": "Pune", "program": "MBA", "fees": "17 Lacs | 15 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_0"}, {"name": "Symbiosis SIBM", "city": "Pune", "program": "MBA", "fees": "18 Lacs | 16 Lacs", "campuses": "Pune | Bengaluru | Hyderabad", "avg_pkg": "15 - 22 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_1"}, {"name": "PUMBA Pune", "city": "Pune", "program": "MBA", "fees": "3 Lacs | 2.5 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 14 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_4"}, {"name": "Symbiosis Online", "city": "Pune", "program": "MBA (Online)", "fees": "2 Lacs | 1.8 Lacs", "campuses": "Online", "avg_pkg": "6 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_9"}, {"name": "RIIM Pune (Ramachandran International Institute of Management)", "city": "Pune", "program": "MBA / PGDM", "fees": "6.5 Lakh (MBA) | 8.5 Lakh (PGDM)", "campuses": "Pune", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/EZkzqGQrhB4", "id": "cat_44"}, {"name": "Indus Business School Pune (IIEBM)", "city": "Pune", "program": "PGDM", "fees": "9.25 Lakh", "campuses": "Pune", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/oH5SnnGodr8", "id": "cat_45"}, {"name": "Pune Institute of Business Management (PIBM Pune)", "city": "Pune", "program": "MBA / PGDM", "fees": "9 Lakh", "campuses": "Pune", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/gkgje53Yp9w", "id": "cat_46"}, {"name": "Imperial School of Banking and Management Studies (ISBMS), Pune", "city": "Pune", "program": "PGDM", "fees": "8 Lakh", "campuses": "Pune", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/uadfXsQWuRM", "id": "cat_47"}, {"name": "Lexicon Management Institute of Leadership and Excellence (Lexicon MILE), Pune", "city": "Pune", "program": "PGDM", "fees": "10.8 Lakh", "campuses": "Pune", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/EOM-zvLgSp4", "id": "cat_48"}, {"name": "ISMS Pune", "city": "Pune", "program": "MBA / PGDM", "fees": "6.85 Lakhs to 16 Lakhs", "campuses": "Pune", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/Mae-q5o5Adg", "id": "cat_49"}], "Jamshedpur": [{"name": "XLRI Jamshedpur", "city": "Jamshedpur", "program": "PGDM (BM / HRM)", "fees": "24 Lacs | 22 Lacs", "campuses": "Main Campus", "avg_pkg": "26 - 34 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_0"}], "Delhi": [{"name": "IMI Delhi", "city": "Delhi", "program": "PGDM", "fees": "18 Lacs | 16 Lacs", "campuses": "Main Campus", "avg_pkg": "14 - 20 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_2"}, {"name": "FORE School Delhi", "city": "Delhi", "program": "PGDM", "fees": "15 Lacs | 13 Lacs", "campuses": "Main Campus", "avg_pkg": "10 - 15 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_10"}, {"name": "IMT Ghaziabad", "city": "Delhi", "program": "PGDM", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "12 - 18 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "nirf_7"}, {"name": "LPU Online", "city": "Delhi", "program": "MBA (Online)", "fees": "1.3 Lacs | 1.1 Lacs", "campuses": "Online", "avg_pkg": "4 - 8 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_4"}], "Chennai": [{"name": "LIBA Chennai", "city": "Chennai", "program": "PGDM", "fees": "12 Lacs | 10 Lacs", "campuses": "Main Campus", "avg_pkg": "8 - 13 LPA", "yt": "https://www.youtube.com/embed/tpTeEhhWIxU", "id": "xat_4"}], "Goa": [{"name": "GIM Goa", "city": "Goa", "program": "PGDM", "fees": "16 Lacs | 14 Lacs", "campuses": "Main Campus", "avg_pkg": "11 - 17 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "xat_9"}], "Nagpur": [{"name": "IMT Nagpur", "city": "Nagpur", "program": "PGDM", "fees": "10 Lacs | 9 Lacs", "campuses": "Main Campus", "avg_pkg": "7 - 11 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "cmat_8"}], "Chandigarh": [{"name": "Chandigarh University", "city": "Chandigarh", "program": "MBA (Online)", "fees": "1.4 Lacs | 1.2 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_3"}], "Jaipur": [{"name": "Manipal Online", "city": "Jaipur", "program": "MBA (Online)", "fees": "1.6 Lacs | 1.4 Lacs", "campuses": "Online", "avg_pkg": "5 - 9 LPA", "yt": "https://www.youtube.com/embed/dQw4w9WgXcQ", "id": "online2_2"}, {"name": "Jaipuria Institute of Management, Jaipur", "city": "Jaipur", "program": "MBA", "fees": "14.75 Lakh to 16.6 Lakh", "campuses": "Jaipur", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/pyhZiiEdSUY", "id": "cat_30"}], "Dehradun": [{"name": "Doon Business School (DBS Global University), Dehradun", "city": "Dehradun", "program": "MBA", "fees": "7.5 Lakh to 16.6 Lakh", "campuses": "Dehradun", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/WBx_wYiYjCg", "id": "cat_28"}, {"name": "UPES School of Business, Dehradun", "city": "Dehradun", "program": "MBA", "fees": "19.11 Lakhs to 22.95 Lakhs", "campuses": "Dehradun", "avg_pkg": "Contact us for details", "yt": "https://www.youtube.com/embed/A1o825GiS3k", "id": "cat_29"}]};
 
 // ── Build city tooltips ──
 Object.entries(CITY_MAP).forEach(([city, list]) => {
@@ -1103,6 +1312,41 @@ Object.entries(CITY_MAP).forEach(([city, list]) => {
   ).join('');
 });
 
+// ── Mobile nav toggle ──
+function toggleMobileNav() {
+  const links = document.querySelector('.nav-links');
+  const btn = document.getElementById('navToggle');
+  const overlay = document.getElementById('navOverlay');
+  const isOpen = links.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+  btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  overlay.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+function closeMobileNav() {
+  document.querySelector('.nav-links').classList.remove('open');
+  document.getElementById('navToggle').classList.remove('open');
+  document.getElementById('navOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', closeMobileNav));
+
+// ── Hero card 3D tilt (mouse-follow depth effect) ──
+(function () {
+  const card = document.querySelector('.hero-card');
+  if (!card || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window.matchMedia('(hover: none)').matches) return; // skip on touch devices
+  card.addEventListener('mousemove', (e) => {
+    const r = card.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    card.style.transform = `perspective(900px) rotateY(${px * 10}deg) rotateX(${-py * 10}deg) translateZ(10px)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+})();
+
 function openModalById(id) {
   // close tooltip by blurring
   document.activeElement && document.activeElement.blur();
@@ -1117,6 +1361,38 @@ const APP_NO = 'TBS-' + new Date().getFullYear() + '-' + (1000 + Math.floor(Math
 });
 
 // ── College popup ──
+
+// ── Modal video: in-window player with full-screen, graceful fallback ──
+let currentVid = '';
+function ytId(u){const m=(u||'').match(/(?:embed\/|v=|youtu\.be\/)([\w-]{11})/);return m?m[1]:''}
+function resetVideo(){
+  const box=document.getElementById('m-videobox');
+  box.classList.remove('playing','failed');
+  document.getElementById('m-video').src='';
+}
+function setupVideo(url){
+  resetVideo();
+  currentVid=ytId(url);
+  const f=document.getElementById('m-facade');
+  f.style.backgroundImage=currentVid?"url('https://i.ytimg.com/vi/"+currentVid+"/hqdefault.jpg')":'none';
+  document.getElementById('m-vlink').href='https://www.youtube.com/watch?v='+currentVid;
+}
+function playVideo(){
+  if(!currentVid)return;
+  const box=document.getElementById('m-videobox'),fr=document.getElementById('m-video');
+  const origin=/^https?:/.test(location.protocol)?'&origin='+encodeURIComponent(location.origin):'';
+  fr.onload=function(){try{fr.contentWindow.postMessage(JSON.stringify({event:'listening',id:1,channel:'widget'}),'*')}catch(e){}};
+  fr.src='https://www.youtube.com/embed/'+currentVid+'?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1'+origin;
+  box.classList.add('playing');
+}
+document.getElementById('m-facade').addEventListener('click',playVideo);
+window.addEventListener('message',function(e){
+  if(!/youtube(-nocookie)?\.com$/.test(new URL(e.origin).hostname))return;
+  let d=e.data;try{if(typeof d==='string')d=JSON.parse(d)}catch(_){return}
+  if(d&&d.event==='onError'||(d&&d.info&&d.info.errorCode)){
+    document.getElementById('m-videobox').classList.add('failed');
+  }
+});
 let currentCollegeName = '';
 function openModal(id) {
   const c = COLLEGES[id];
@@ -1128,13 +1404,13 @@ function openModal(id) {
   document.getElementById('m-fees').textContent = '₹' + c.fees;
   document.getElementById('m-campus').textContent = c.campuses;
   document.getElementById('m-pkg').textContent = c.avg_pkg;
-  document.getElementById('m-video').src = c.yt + '?autoplay=0&rel=0&modestbranding=1';
+  setupVideo(c.yt);
   document.getElementById('collegeModal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function closeModal() {
   document.getElementById('collegeModal').classList.remove('open');
-  document.getElementById('m-video').src = '';
+  resetVideo();
   document.body.style.overflow = '';
 }
 function handleOverlayClick(e) { if (e.target.id === 'collegeModal') closeModal(); }
@@ -1256,14 +1532,6 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnU5t0PE4Fcfzh
 function sendToSheet(payload) {
   return fetch(APPS_SCRIPT_URL, {
     method: 'POST',
-    // IMPORTANT: must be text/plain, NOT application/json.
-    // application/json forces the browser to send a CORS preflight (OPTIONS)
-    // request first, and Google Apps Script web apps don't respond to that,
-    // so the whole request gets blocked before it ever reaches doPost().
-    // text/plain is a CORS "simple" request, so the browser skips preflight
-    // and sends the POST straight through. The Apps Script side is unaffected
-    // since it just reads e.postData.contents and JSON.parses it regardless
-    // of the declared content type.
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(payload)
   })
@@ -1397,15 +1665,14 @@ function handleEnquiry() {
     btn.style.background = '#14532d';
     btn.style.color = '#fff';
   };
-
   if (APPS_SCRIPT_URL && APPS_SCRIPT_URL !== 'PASTE_YOUR_WEB_APP_URL_HERE') {
     sendToSheet(enquiry)
       .then(res => {
-        console.log('Sheet response:', res);
+        if (res && res.status === 'error') throw new Error(res.message || 'error');
         showThanks();
       })
       .catch(err => {
-        console.error('Sheet error:', err);
+        console.error(err);
         btn.textContent = 'Something went wrong — please try again';
         btn.disabled = false;
       });
@@ -1413,6 +1680,68 @@ function handleEnquiry() {
     showThanks();
   }
 }
+
+
+// ══ REVAMP LAYER (visual only) ══
+(function(){
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var nav=document.querySelector('nav');
+  var bar=document.createElement('div');bar.id='scrollProg';document.body.appendChild(bar);
+  function onScroll(){
+    var h=document.documentElement,max=h.scrollHeight-h.clientHeight;
+    bar.style.width=(max>0?(h.scrollTop/max*100):0)+'%';
+    if(nav)nav.classList.toggle('scrolled',h.scrollTop>40);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+  if(reduce)return;
+  // hero particles
+  var hero=document.getElementById('home');
+  if(hero){
+    var p=document.createElement('div');p.className='hero-particles';
+    for(var i=0;i<22;i++){
+      var d=document.createElement('i');
+      d.style.cssText='left:'+(Math.random()*100)+'%;--s:'+(3+Math.random()*7).toFixed(1)+'px;--d:'+(9+Math.random()*12).toFixed(1)+'s;--dl:-'+(Math.random()*16).toFixed(1)+'s;--x:'+((Math.random()-.5)*160).toFixed(0)+'px';
+      p.appendChild(d);
+    }
+    hero.insertBefore(p,hero.firstChild);
+  }
+  // scroll reveal
+  var sel='.section-inner > *, .svc-card, .why-card, .exam-card, .testi-card, .c-pill, .process-wrap > *';
+  var els=[].slice.call(document.querySelectorAll(sel)).filter(function(e){return !e.closest('#caf')&&!e.closest('.hero')&&!e.closest('.modal')});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(en){
+      en.forEach(function(x){
+        if(x.isIntersecting){
+          var t=x.target;t.classList.add('in');io.unobserve(t);
+          setTimeout(function(){t.classList.remove('rv','in');t.style.removeProperty('--rd')},1100);
+        }
+      });
+    },{threshold:.08,rootMargin:'0px 0px -40px 0px'});
+    els.forEach(function(e,i){
+      var sib=e.parentElement?[].indexOf.call(e.parentElement.children,e):0;
+      e.style.setProperty('--rd',Math.min(sib,8)*0.07+'s');
+      e.classList.add('rv');io.observe(e);
+    });
+  }
+  // spotlight on cards
+  if(!window.matchMedia('(hover: none)').matches){
+    document.addEventListener('mousemove',function(e){
+      var c=e.target.closest&&e.target.closest('.svc-card,.why-card,.exam-card,.testi-card');
+      if(!c)return;var r=c.getBoundingClientRect();
+      c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px');
+    },{passive:true});
+  }
+  // animated stat counters
+  document.querySelectorAll('.stat-item .num').forEach(function(n){
+    var m=n.textContent.trim().match(/^(\d+)(\+?)$/);if(!m)return;
+    var target=+m[1],suf=m[2],started=false;
+    function run(){
+      if(started)return;started=true;var t0=performance.now(),dur=1600;
+      (function tick(t){var k=Math.min((t-t0)/dur,1),v=Math.round(target*(1-Math.pow(1-k,3)));n.textContent=v+suf;if(k<1)requestAnimationFrame(tick)})(t0);
+    }
+    n.textContent='0'+suf;setTimeout(run,700);
+  });
+})();
 
 // ── Smooth scroll ──
 document.querySelectorAll('a[href^="#"]').forEach(a => {
